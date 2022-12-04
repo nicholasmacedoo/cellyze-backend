@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenants {
+  id          String  @id @default(uuid())
+  name        String
+  email       String  @unique
+  password    String
+  name_church String? @unique
+
+  created_at DateTime @default(now())
+
+  shepherds  Shepherds[]
+  disciplers Disciplers[]
+  leaders    Leaders[]
+  cells      Cells[]
+  reports    Reports[]
+
+  @@map("tenants")
+}
+
+model Shepherds {
+  id         String   @id @default(uuid())
+  name       String
+  tenant_id  String
+  created_at DateTime @default(now())
+
+  tenant     Tenants      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  disciplers Disciplers[]
+
+  @@map("shepherds")
+}
+
+model Disciplers {
+  id          String   @id @default(uuid())
+  name        String
+  shepherd_id String
+  tenant_id   String
+  created_at  DateTime @default(now())
+
+  leaders Leaders[]
+
+  tenant   Tenants   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  shepherd Shepherds @relation(fields: [shepherd_id], references: [id], onDelete: Cascade)
+
+  @@map("disciplers")
+}
+
+model Leaders {
+  id           String   @id @default(uuid())
+  name         String
+  shepherd_id  String
+  discipler_id String
+  tenant_id    String
+  created_at   DateTime @default(now())
+
+  tenant    Tenants    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  discipler Disciplers @relation(fields: [discipler_id], references: [id], onDelete: Cascade)
+  cells     Cells?
+
+  @@map("leaders")
+}
+
+model Cells {
+  id         String   @id @default(uuid())
+  name       String
+  place      String?
+  tenant_id  String
+  leader_id  String   @unique
+  created_at DateTime @default(now())
+
+  tenant  Tenants   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  leader  Leaders   @relation(fields: [leader_id], references: [id], onDelete: Cascade)
+  reports Reports[]
+
+  @@map("cells")
+}
+
+model Reports {
+  id                String   @id @default(uuid())
+  cell_day          DateTime
+  number_of_members Int
+  regulars          Int
+  visitors          Int
+  tenant_id         String
+  cell_id           String
+  created_at        DateTime @default(now())
+
+  tenant Tenants @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  cell   Cells   @relation(fields: [cell_id], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
