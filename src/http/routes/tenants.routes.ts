@@ -6,7 +6,7 @@ const tenantsControllers = new TenantsControllers();
 
 tenantsRoutes.get('/', tenantsControllers.index);
 tenantsRoutes.post('/', tenantsControllers.create);
-tenantsRoutes.put('/:id', tenantsControllers.create);
+tenantsRoutes.put('/:id', tenantsControllers.update);
 tenantsRoutes.get('/:nameChurch', tenantsControllers.findByChurch);
 
 export default tenantsRoutes;
