@@ -25,9 +25,9 @@ export default class UpdateTenantsService
                     id,
                 },
                 data: {
-                    ...name_church && { name_church },
-                    ...name && { name },
-                    ...email && { email },
+                    name_church,
+                    name,
+                    email,
                     ...passwordHashed && { password: passwordHashed },
                 }
             });
