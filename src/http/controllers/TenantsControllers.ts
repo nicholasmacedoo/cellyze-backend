@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import CreateTenantsService from "../../services/CreateTenantsService";
+import UpdateTenantsService from "../../services/UpdateTenantsService";
 
 const prisma = new PrismaClient();
 
@@ -14,6 +15,23 @@ export default class TenantsControllers {
         const tenant = await createTenantService.execute({
             name,
             email,
+            password,
+        });
+        
+        return response.json(tenant)
+    }
+
+    public async update(request: Request, response: Response) {
+        const { id } = request.params;
+        const { name_church, name, email, password } = request.body;
+        
+        const updateTenantService = new UpdateTenantsService();
+
+        const tenant = await updateTenantService.execute({
+            id, 
+            name_church, 
+            name, 
+            email, 
             password,
         });
         
