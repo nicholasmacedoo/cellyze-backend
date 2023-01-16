@@ -7,6 +7,11 @@ const prisma = new PrismaClient();
 
 
 export default class TenantsControllers {
+    public async index(request: Request, response: Response) {
+        const tenants = await prisma.tenants.findMany();
+
+        return response.json(tenants)
+    }
     public async create(request: Request, response: Response) {
         const { name, email, password } = request.body;
         
