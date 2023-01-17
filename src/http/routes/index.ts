@@ -13,7 +13,7 @@ const routes = Router();
 /** Public */
 routes.use('/sessions', sessionsRouter);
 routes.use('/tenants', tenantsRoutes);
-routes.use('/reports', ensureAuthenticated, reportRoutes);
+routes.use('/reports', reportRoutes);
 /** Ensure Authenticate */
 routes.use('/shepherds', ensureAuthenticated, shepherdsRoutes);
 routes.use('/disciplers', ensureAuthenticated, disciplersRoutes);
