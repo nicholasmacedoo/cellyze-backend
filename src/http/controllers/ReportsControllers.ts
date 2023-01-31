@@ -51,7 +51,11 @@ export default class ReportsControllers
             item.report.countReport,
         ]);
 
-        const { filename, buffer } = createReportPDF(formatData);
+        const date = new Date()
+        const { filename, buffer } = createReportPDF(formatData, {
+            month: date.getMonth(),
+            year: date.getFullYear()
+        });
 
         
 
@@ -59,14 +63,18 @@ export default class ReportsControllers
         .setHeader('Content-disposition', 'attachment; filename=' + filename)
         .setHeader('Content-type', 'application/pdf')
         .send(buffer);
-        // return response.json({});
     }
 
     public async createReportByCell(request: Request, response: Response) {
 
         const { cell_id } = request.params;
+        const { month, year } = request.query
+
         const reportRepository = new ReportRepository();
-        const report = await reportRepository.getReportMonthByCell(cell_id);
+        const report = await reportRepository.getReportMonthByCell(cell_id, {
+            month: Number(month), 
+            year: Number(year)
+        });
 
         if(report) {
             const formatData = [[
@@ -78,7 +86,10 @@ export default class ReportsControllers
                 report.report.countReport,
             ]];
     
-            const { filename, buffer } = createReportPDF(formatData);
+            const { filename, buffer } = createReportPDF(formatData, {
+                month: Number(month), 
+                year: Number(year)
+            });
     
             return response
             .setHeader('Content-disposition', 'attachment; filename=' + filename)

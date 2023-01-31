@@ -1,7 +1,8 @@
 import { PrismaClient, Reports } from "@prisma/client";
-
+import { lastDayOfMonth, startOfMonth } from 'date-fns'
 const prisma = new PrismaClient();
 
+interface QueryParams { month: number; year: number }
 export default class ReportRepository {
     public async getReportMonth() {
         
@@ -45,8 +46,11 @@ export default class ReportRepository {
         return groupReportByCell;
     }
 
-    public async getReportMonthByCell(cell_id: string) {
+    public async getReportMonthByCell(cell_id: string, { month, year }: QueryParams) {
         
+        const startDayOfMonth = startOfMonth(new Date(year, month))
+        const lastDayMonth = lastDayOfMonth(new Date(year, month))
+    
         const cell = await prisma.cells.findUnique({
             where: {
                 id: cell_id,
@@ -61,11 +65,27 @@ export default class ReportRepository {
         });
 
         if(cell) {
-            const reports: Reports[] = await prisma.$queryRaw`
-                SELECT *
-                FROM reports r
-                WHERE TO_CHAR(r.created_at, 'MM-YYYY') = to_char(now() , 'MM-YYYY') AND r.cell_id = ${cell_id}
-            `;
+         
+            const reports = await prisma.reports.findMany({
+                where: {
+                    cell_id,
+                    created_at: {
+                        gte: startDayOfMonth,
+                        lte: lastDayMonth
+                    }
+                },
+                include: {
+                    cell: {
+                        include: {
+                            leader: {
+                                select: {
+                                    name: true,
+                                }
+                            }
+                        }
+                    },
+                }
+            })
     
             const calculateMiddle = reports.reduce((accumulator, currentReport) => {
                 accumulator.number_of_members += currentReport.number_of_members;
