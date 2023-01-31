@@ -12,10 +12,12 @@ function toBuffer(ab: ArrayBuffer) {
     return buf;
 }
 
-export function createReportPDF(body: (string | number)[][]) {
+interface ReferenceDate { month: number; year: number }
 
-    const date = (new Date()).toLocaleDateString('pt-BR');
+export function createReportPDF(body: (string | number)[][], dateReference: ReferenceDate) {
 
+    const date = `${dateReference.month + 1}/${dateReference.year}`;
+    
     const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'px'
@@ -40,7 +42,7 @@ export function createReportPDF(body: (string | number)[][]) {
     doc.setFont(font, 'normal');
     doc.setTextColor('#484964');
     doc.setFontSize(12);
-    doc.text('Data de emissão: ' + date, 30, 43);
+    doc.text('Mês do relatório: ' + date, 30, 43);
 
     // Tabela do resultado
     autoTable(doc, {
