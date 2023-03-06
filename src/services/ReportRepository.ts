@@ -4,9 +4,21 @@ const prisma = new PrismaClient();
 
 interface QueryParams { month: number; year: number }
 export default class ReportRepository {
-    public async getReportMonth() {
-        
+    public async getReportMonth(tenant_id: string, { month, year }: QueryParams) {
+        const startDayOfMonth = startOfMonth(new Date(year, month))
+        const lastDayMonth = lastDayOfMonth(new Date(year, month))
+
+        console.log({
+            startDayOfMonth,
+            lastDayMonth,
+            month,
+            year
+        })
+
         const cells = await prisma.cells.findMany({ 
+            where: {
+                tenant_id,
+            },
             include: {
                 leader: {
                     select: {
@@ -16,11 +28,27 @@ export default class ReportRepository {
             },
         });
 
-        const reports: Reports[] = await prisma.$queryRaw`
-            SELECT *
-            FROM reports r
-            WHERE TO_CHAR(r.created_at, 'MM-YYYY') = to_char(now() , 'MM-YYYY')
-        `;
+        const reports = await prisma.reports.findMany({
+            where: {
+                tenant_id,
+                created_at: {
+                    gte: startDayOfMonth,
+                    lte: lastDayMonth
+                }
+            },
+            include: {
+                cell: {
+                    select: {
+                        name: true,
+                    }
+                },
+            }
+        })
+        // const reports: Reports[] = await prisma.$queryRaw`
+        //     SELECT *
+        //     FROM reports r
+        //     WHERE TO_CHAR(r.created_at, 'MM-YYYY') = to_char(now() , 'MM-YYYY')
+        // `;
 
         const groupReportByCell = cells.map(cell => {
             const reportsCell = reports.filter(report => report.cell_id === cell.id);

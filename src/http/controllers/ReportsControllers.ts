@@ -39,8 +39,14 @@ export default class ReportsControllers
 
     public async createReportPDF(request: Request, response: Response) {
 
+        const { id } = request.user
+        const { month, year } = request.query
         const reportRepository = new ReportRepository();
-        const report = await reportRepository.getReportMonth();
+        
+        const report = await reportRepository.getReportMonth(id, {
+            month: Number(month),
+            year: Number(year)
+        });
 
         const formatData = report.map(item => [
             item.name,
@@ -51,11 +57,19 @@ export default class ReportsControllers
             item.report.countReport,
         ]);
 
-        const date = new Date()
+        const summary = report.reduce((accumulator, currentReport) => {
+            accumulator.totalMembers += currentReport.report.number_of_members
+            accumulator.totalRegulars += currentReport.report.regulars  
+            accumulator.totalVisitors += currentReport.report.visitors
+            accumulator.totalQtdMonth += currentReport.report.countReport
+
+            return accumulator
+        }, { totalMembers: 0, totalRegulars: 0, totalVisitors: 0, totalQtdMonth: 0})
+
         const { filename, buffer } = createReportPDF(formatData, {
-            month: date.getMonth(),
-            year: date.getFullYear()
-        });
+            month: Number(month),
+            year: Number(year)
+        }, summary);
 
         
 
@@ -85,6 +99,7 @@ export default class ReportsControllers
                 report.report.visitors,
                 report.report.countReport,
             ]];
+            
     
             const { filename, buffer } = createReportPDF(formatData, {
                 month: Number(month), 
