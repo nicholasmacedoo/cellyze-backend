@@ -61,14 +61,14 @@ export function createReportPDF(body: (string | number)[][], dateReference: Refe
             body: [
                 ...body,
                 [
-                    { title: '', colSpan: 2, styles: { fillColor: '#484964', textColor: '#ffffff',fontStyle: 'bold', halign: 'left' }},
+                    { title: '', colSpan: 3, styles: { fillColor: '#484964', textColor: '#ffffff',fontStyle: 'bold', halign: 'left' }},
                     { title: 'Total membros', styles: { fillColor: '#484964', textColor: '#ffffff',fontStyle: 'bold', halign: 'left' }},
                     { title: 'Total Assíduos', styles: { fillColor: '#484964', textColor: '#ffffff',fontStyle: 'bold', halign: 'left' }},
                     { title: 'Total Visitantes', styles: { fillColor: '#484964', textColor: '#ffffff',fontStyle: 'bold', halign: 'left' }},
                     { title: 'Total Mês', styles: { fillColor: '#484964', textColor: '#ffffff',fontStyle: 'bold', halign: 'left' }},    
                 ],
                 [
-                    { title: '', colSpan: 2, styles: { textColor: '#484964',fontStyle: 'bold', halign: 'left' }},
+                    { title: '', colSpan: 3, styles: { textColor: '#484964',fontStyle: 'bold', halign: 'left' }},
                     { title: summary.totalMembers.toString(), styles: { textColor: '#484964',fontStyle: 'bold', halign: 'left' }},
                     { title: summary.totalRegulars.toString(), styles: { textColor: '#484964',fontStyle: 'bold', halign: 'left' }},
                     { title: summary.totalVisitors.toString(), styles: { textColor: '#484964',fontStyle: 'bold', halign: 'left' }},
@@ -92,6 +92,7 @@ export function createReportPDF(body: (string | number)[][], dateReference: Refe
             head: [
                 [
                     { content: 'Celula' },
+                    { content: 'Discipulador' },
                     { content: 'Lider' },
                     { content: 'N. Membros' },
                     { content: 'Assiduos' },

@@ -94,6 +94,7 @@ export default class ReportsControllers
         if(report) {
             const formatData = [[
                 report.name,
+                report.leader.discipler.name,
                 report.leader.name,
                 report.report.number_of_members,
                 report.report.regulars,

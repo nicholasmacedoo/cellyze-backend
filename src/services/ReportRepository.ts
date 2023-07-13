@@ -87,6 +87,13 @@ export default class ReportRepository {
                 leader: {
                     select: {
                         name: true,
+                    },
+                    include: {
+                        discipler: {
+                            select: {
+                                name: true,
+                            }
+                        }
                     }
                 }
             },
