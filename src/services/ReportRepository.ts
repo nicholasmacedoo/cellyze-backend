@@ -8,13 +8,6 @@ export default class ReportRepository {
         const startDayOfMonth = startOfMonth(new Date(year, month))
         const lastDayMonth = lastDayOfMonth(new Date(year, month))
 
-        console.log({
-            startDayOfMonth,
-            lastDayMonth,
-            month,
-            year
-        })
-
         const cells = await prisma.cells.findMany({ 
             where: {
                 tenant_id,
@@ -23,6 +16,13 @@ export default class ReportRepository {
                 leader: {
                     select: {
                         name: true,
+                    },
+                    include: {
+                        discipler: {
+                            select: {
+                                name: true,
+                            }
+                        }
                     }
                 }
             },

@@ -50,6 +50,7 @@ export function createReportPDF(body: (string | number)[][], dateReference: Refe
             head: [
                 [
                     { content: 'Celula' },
+                    { content: 'Discipulador' },
                     { content: 'Lider' },
                     { content: 'N. Membros' },
                     { content: 'Assiduos' },
