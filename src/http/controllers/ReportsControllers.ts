@@ -50,6 +50,7 @@ export default class ReportsControllers
 
         const formatData = report.map(item => [
             item.name,
+            item.leader.discipler.name,
             item.leader.name,
             item.report.number_of_members,
             item.report.regulars,
@@ -93,6 +94,7 @@ export default class ReportsControllers
         if(report) {
             const formatData = [[
                 report.name,
+                report.leader.discipler.name,
                 report.leader.name,
                 report.report.number_of_members,
                 report.report.regulars,
