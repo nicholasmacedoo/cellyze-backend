@@ -29,7 +29,7 @@ export default class ReportRepository {
         const reports = await prisma.reports.findMany({
             where: {
                 tenant_id,
-                created_at: {
+                cell_day: {
                     gte: startDayOfMonth,
                     lte: lastDayMonth
                 }
@@ -100,7 +100,7 @@ export default class ReportRepository {
             const reports = await prisma.reports.findMany({
                 where: {
                     cell_id,
-                    created_at: {
+                    cell_day: {
                         gte: startDayOfMonth,
                         lte: lastDayMonth
                     }
