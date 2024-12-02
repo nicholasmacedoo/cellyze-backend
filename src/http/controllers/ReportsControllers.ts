@@ -117,4 +117,17 @@ export default class ReportsControllers
 
         return response.status(404).json({ message: 'Houve um erro'})
     }
+
+    public async getMonthlyReports(request: Request, response: Response) {
+        const tenant_id = request.user.id;
+        const { startDate, endDate } = request.query as {
+            startDate: string
+            endDate: string
+        };
+        // console.log(tenant_id, startDate, endDate)
+        const reportRepository = new ReportRepository();
+        const report = await reportRepository.getMonthlyReports(tenant_id, startDate, endDate)
+
+        return response.json(report)
+    }
 }
