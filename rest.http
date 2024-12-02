@@ -1,0 +1,18 @@
+@token = "";
+
+### Session
+# @name session
+POST http://localhost:3333/sessions
+Content-Type: application/json
+
+{
+    "email": "nicholasmacedoo@gmail.com",
+    "password": "123123"
+}
+###
+@token = {{session.response.body.token}}
+
+### Report Montly 
+
+GET http://localhost:3333/reports/montly?startDate=2023-01-01&endDate=2024-12-02
+Authorization: Bearer {{token}}

@@ -3,6 +3,17 @@ import { lastDayOfMonth, startOfMonth } from 'date-fns'
 const prisma = new PrismaClient();
 
 interface QueryParams { month: number; year: number }
+interface MonthlyReport {
+    month: Date;              
+    total_reports: number;    
+    total_members: number;    
+    total_regulars: number;   
+    total_visitors: number;   
+    avg_members: number;
+    avg_regulars: number;
+    avg_visitors: number;
+}
+
 export default class ReportRepository {
     public async getReportMonth(tenant_id: string, { month, year }: QueryParams) {
         const startDayOfMonth = startOfMonth(new Date(year, month))
@@ -137,5 +148,35 @@ export default class ReportRepository {
                 }
             };
         }
+    }
+
+    public async getMonthlyReports(tenant_id: string, startDate: string, endDate: string) {
+        const reports = await prisma.$queryRaw<MonthlyReport[]>`
+            SELECT 
+                DATE_TRUNC('month', "cell_day") AS month,
+                "tenant_id",
+                COUNT(*) AS total_reports,
+                SUM("number_of_members") AS total_members,
+                SUM("regulars") AS total_regulars,
+                SUM("visitors") AS total_visitors,
+                AVG("number_of_members")::numeric(10,2) AS avg_members,
+                AVG("regulars")::numeric(10,2) AS avg_regulars,
+                AVG("visitors")::numeric(10,2) AS avg_visitors
+            FROM "reports"
+            WHERE "cell_day" >= ${startDate}::timestamp AND "cell_day" <= ${endDate}::timestamp
+            AND "tenant_id" = ${tenant_id}
+            GROUP BY month, "tenant_id"
+            ORDER BY month;
+        `
+        return reports.map(report => ({
+            ...report,
+            total_reports: Number(report.total_reports),
+            total_members: Number(report.total_members),
+            total_regulars: Number(report.total_regulars),
+            total_visitors: Number(report.total_visitors),
+            avg_members: Number(report.avg_members),
+            avg_regulars: Number(report.avg_regulars),
+            avg_visitors: Number(report.avg_visitors),
+        }));
     }
 }
